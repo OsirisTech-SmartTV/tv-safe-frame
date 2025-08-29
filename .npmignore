@@ -1,0 +1,16 @@
+# Add to .gitignore for npm publishing
+.npmrc
+*.tgz
+
+# npm pack output
+*.tgz
+
+# npm debug files
+npm-debug.log*
+.npm
+
+# Optional npm cache directory
+.npm
+
+# npm audit
+.npm-audit.json

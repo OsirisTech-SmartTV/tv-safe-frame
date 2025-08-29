@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Frame TV - React Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #000;
+            overflow: hidden; /* Prevent scrollbars on TV */
+        }
+        
+        #root {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Reset default HTML font size for demo */
+        html {
+            font-size: 16px; /* This will be dynamically updated by ScaleUtil */
+        }
+
+        /* Basic responsive breakpoints for testing */
+        @media (max-width: 1280px) {
+            html { font-size: 14px; }
+        }
+        
+        @media (min-width: 2560px) {
+            html { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="module">
+        import React from 'https://esm.sh/react@18'
+        import ReactDOM from 'https://esm.sh/react-dom@18/client'
+        
+        // Import our demo component (this would normally be bundled)
+        // For development, we'll create a simple inline demo
+        
+        const { createElement: h, useState, useContext, createContext, useEffect, useMemo, useCallback, useRef } = React
+
+        // Simplified inline demo since we can't import our built components directly in HTML
+        const SafeFrameDemo = () => {
+            const [viewport, setViewport] = useState({
+                width: window.innerWidth,
+                height: window.innerHeight
+            })
+            
+            const [count, setCount] = useState(0)
+            
+            useEffect(() => {
+                const handleResize = () => {
+                    setViewport({
+                        width: window.innerWidth,
+                        height: window.innerHeight
+                    })
+                    
+                    // Simulate safe frame scaling
+                    const scaleRatio = Math.min(window.innerWidth / 1920, window.innerHeight / 1080)
+                    const fontSize = scaleRatio * 150 // 150% base scale
+                    document.documentElement.style.fontSize = fontSize + '%'
+                }
+                
+                window.addEventListener('resize', handleResize)
+                handleResize() // Initial call
+                
+                return () => window.removeEventListener('resize', handleResize)
+            }, [])
+            
+            return h('div', {
+                style: {
+                    width: '80rem',
+                    height: '45rem',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    margin: 'auto',
+                    overflow: 'hidden',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    borderRadius: '1rem',
+                    padding: '2rem',
+                    boxSizing: 'border-box',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    color: 'white',
+                    fontFamily: 'system-ui, -apple-system, sans-serif'
+                }
+            }, [
+                h('div', {
+                    style: {
+                        position: 'absolute',
+                        top: '1rem',
+                        right: '1rem',
+                        background: 'rgba(0,0,0,0.8)',
+                        padding: '1rem',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.875rem',
+                        fontFamily: 'monospace'
+                    }
+                }, [
+                    h('div', { key: 'title' }, '📱 Viewport Info'),
+                    h('div', { key: 'size' }, `Size: ${viewport.width} × ${viewport.height}`),
+                    h('div', { key: 'safe' }, 'Safe Frame: 80rem × 45rem'),
+                    h('div', { key: 'ratio' }, 'Aspect: 16:9')
+                ]),
+                
+                h('h1', {
+                    style: {
+                        fontSize: '4rem',
+                        margin: '0 0 1rem 0',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                    }
+                }, '📺 Safe Frame TV Demo'),
+                
+                h('p', {
+                    style: {
+                        fontSize: '1.5rem',
+                        margin: '0 0 3rem 0',
+                        opacity: 0.9,
+                        maxWidth: '50rem'
+                    }
+                }, 'This demo shows a 80rem × 45rem safe frame that automatically scales to fit any screen while maintaining 16:9 aspect ratio.'),
+                
+                h('div', {
+                    style: {
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(15rem, 1fr))',
+                        gap: '2rem',
+                        width: '100%',
+                        maxWidth: '60rem'
+                    }
+                }, [
+                    h('div', {
+                        key: 'card1',
+                        style: {
+                            background: 'rgba(255,255,255,0.1)',
+                            padding: '2rem',
+                            borderRadius: '1rem',
+                            backdropFilter: 'blur(10px)'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.5rem' } }, '🎯 Auto Scaling'),
+                        h('p', { style: { margin: 0, fontSize: '1rem', opacity: 0.8 } }, 'Content scales automatically using rem units and font-size scaling.')
+                    ]),
+                    
+                    h('div', {
+                        key: 'card2',
+                        style: {
+                            background: 'rgba(255,255,255,0.1)',
+                            padding: '2rem',
+                            borderRadius: '1rem',
+                            backdropFilter: 'blur(10px)'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.5rem' } }, '🎮 Interactive'),
+                        h('button', {
+                            onClick: () => setCount(c => c + 1),
+                            style: {
+                                padding: '1rem 2rem',
+                                fontSize: '1rem',
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '0.5rem',
+                                cursor: 'pointer'
+                            }
+                        }, `Clicked ${count} times`)
+                    ]),
+                    
+                    h('div', {
+                        key: 'card3',
+                        style: {
+                            background: 'rgba(255,255,255,0.1)',
+                            padding: '2rem',
+                            borderRadius: '1rem',
+                            backdropFilter: 'blur(10px)'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.5rem' } }, '📱 Responsive'),
+                        h('p', { style: { margin: 0, fontSize: '1rem', opacity: 0.8 } }, 'Works on Smart TVs, tablets, desktops, and any screen size.')
+                    ])
+                ]),
+                
+                h('div', {
+                    style: {
+                        marginTop: '3rem',
+                        fontSize: '0.875rem',
+                        opacity: 0.7
+                    }
+                }, 'Resize your browser window to see the scaling in action!')
+            ])
+        }
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'))
+        root.render(h(SafeFrameDemo))
+    </script>
+</body>
+</html>
