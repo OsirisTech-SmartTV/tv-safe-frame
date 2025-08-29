@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Frame TV Demo - React</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        #root {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Demo info panel */
+        .demo-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .demo-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: #4CAF50;
+        }
+
+        .demo-info p {
+            margin: 0.25rem 0;
+            line-height: 1.4;
+        }
+
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .instructions h3 {
+            margin: 0 0 0.5rem 0;
+            color: #2196F3;
+        }
+
+        .instructions ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .instructions li {
+            margin: 0.25rem 0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading">
+            <div class="spinner"></div>
+            Loading Safe Frame TV Demo...
+        </div>
+    </div>
+
+    <!-- Demo Information -->
+    <div class="demo-info">
+        <h3>📺 Safe Frame TV Demo</h3>
+        <p><strong>Library:</strong> @osiris-smarttv/tv-safe-frame</p>
+        <p><strong>Version:</strong> 0.0.1</p>
+        <p><strong>Framework:</strong> React 17+</p>
+        <p><strong>Safe Frame:</strong> 80rem × 45rem (16:9)</p>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+        <h3>🎮 How to Test</h3>
+        <ul>
+            <li><strong>Resize your browser</strong> to see responsive scaling</li>
+            <li><strong>Try different aspect ratios</strong> (16:9, 21:9, 4:3)</li>
+            <li><strong>Open DevTools</strong> and emulate different devices</li>
+            <li><strong>Check insets values</strong> to see safe frame positioning</li>
+            <li><strong>Use F11</strong> for fullscreen testing</li>
+        </ul>
+    </div>
+    
+    <script type="module">
+        import React from 'https://esm.sh/react@18'
+        import ReactDOM from 'https://esm.sh/react-dom@18/client'
+        
+        const { createElement: h, useState, useEffect } = React
+
+        // Enhanced demo with insets calculation
+        const SafeFrameDemo = () => {
+            const [viewport, setViewport] = useState({
+                width: window.innerWidth,
+                height: window.innerHeight
+            })
+            
+            const [count, setCount] = useState(0)
+            const [insets, setInsets] = useState({ top: 0, bottom: 0, left: 0, right: 0 })
+            
+            useEffect(() => {
+                const handleResize = () => {
+                    const vw = window.innerWidth
+                    const vh = window.innerHeight
+                    
+                    setViewport({ width: vw, height: vh })
+                    
+                    // Calculate safe frame dimensions (16:9 aspect ratio)
+                    const referenceRatio = 16 / 9
+                    const currentRatio = vw / vh
+                    
+                    let safeFrameWidth, safeFrameHeight
+                    
+                    if (currentRatio < referenceRatio) {
+                        // Viewport is taller than 16:9
+                        safeFrameWidth = vw
+                        safeFrameHeight = vw / referenceRatio
+                    } else {
+                        // Viewport is wider than 16:9
+                        safeFrameWidth = vh * referenceRatio
+                        safeFrameHeight = vh
+                    }
+                    
+                    // Calculate insets
+                    const horizontalOffset = Math.max(0, (vw - safeFrameWidth) / 2)
+                    const verticalOffset = Math.max(0, (vh - safeFrameHeight) / 2)
+                    
+                    setInsets({
+                        top: verticalOffset,
+                        bottom: verticalOffset,
+                        left: horizontalOffset,
+                        right: horizontalOffset
+                    })
+                    
+                    // Apply font scaling
+                    const scaleRatio = currentRatio < referenceRatio
+                        ? (vw * 150) / 1920
+                        : (vh * 150) / 1080
+                    
+                    document.documentElement.style.fontSize = scaleRatio + '%'
+                }
+                
+                window.addEventListener('resize', handleResize)
+                handleResize() // Initial call
+                
+                return () => window.removeEventListener('resize', handleResize)
+            }, [])
+            
+            const hasInsets = insets.top > 0 || insets.bottom > 0 || insets.left > 0 || insets.right > 0
+            
+            return h('div', {
+                style: {
+                    width: '80rem',
+                    height: '45rem',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    margin: 'auto',
+                    overflow: 'hidden',
+                    background: 'linear-gradient(135deg, #4ade80 0%, #3b82f6 100%)',
+                    borderRadius: '1rem',
+                    padding: '2rem',
+                    boxSizing: 'border-box',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    color: 'white',
+                    fontFamily: 'system-ui, -apple-system, sans-serif'
+                }
+            }, [
+                // Header
+                h('div', {
+                    key: 'header',
+                    style: {
+                        textAlign: 'center',
+                        marginBottom: '2rem'
+                    }
+                }, [
+                    h('h1', {
+                        style: {
+                            fontSize: '3rem',
+                            margin: '0 0 1rem 0',
+                            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                        }
+                    }, '📺 Safe Frame TV with Insets'),
+                    h('p', {
+                        style: {
+                            fontSize: '1.2rem',
+                            margin: 0,
+                            opacity: 0.9
+                        }
+                    }, '80rem × 45rem (16:9) with automatic scaling and inset calculation')
+                ]),
+                
+                // Main content grid
+                h('div', {
+                    key: 'grid',
+                    style: {
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(18rem, 1fr))',
+                        gap: '1.5rem',
+                        flex: 1
+                    }
+                }, [
+                    // Viewport info
+                    h('div', {
+                        key: 'viewport',
+                        style: {
+                            background: 'rgba(0,0,0,0.2)',
+                            padding: '1.5rem',
+                            borderRadius: '0.75rem',
+                            backdropFilter: 'blur(10px)'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.25rem' } }, '🖥️ Viewport'),
+                        h('div', { style: { fontFamily: 'monospace', fontSize: '0.9rem' } }, [
+                            h('div', { key: 'size' }, `Size: ${viewport.width} × ${viewport.height}px`),
+                            h('div', { key: 'ratio' }, `Ratio: ${(viewport.width / viewport.height).toFixed(2)}:1`),
+                            h('div', { key: 'dpr' }, `DPR: ${window.devicePixelRatio || 1}`)
+                        ])
+                    ]),
+                    
+                    // Insets info
+                    h('div', {
+                        key: 'insets',
+                        style: {
+                            background: 'rgba(0,0,0,0.2)',
+                            padding: '1.5rem',
+                            borderRadius: '0.75rem',
+                            backdropFilter: 'blur(10px)'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.25rem' } }, '📏 Insets'),
+                        h('div', { style: { fontFamily: 'monospace', fontSize: '0.9rem' } }, [
+                            h('div', { key: 'top' }, `Top: ${Math.round(insets.top)}px`),
+                            h('div', { key: 'bottom' }, `Bottom: ${Math.round(insets.bottom)}px`),
+                            h('div', { key: 'left' }, `Left: ${Math.round(insets.left)}px`),
+                            h('div', { key: 'right' }, `Right: ${Math.round(insets.right)}px`)
+                        ]),
+                        hasInsets && h('div', {
+                            style: {
+                                marginTop: '0.5rem',
+                                padding: '0.5rem',
+                                background: 'rgba(255,193,7,0.2)',
+                                borderRadius: '0.25rem',
+                                fontSize: '0.8rem',
+                                color: '#ffc107'
+                            }
+                        }, '⚠️ Viewport has different aspect ratio')
+                    ]),
+                    
+                    // Interactive element
+                    h('div', {
+                        key: 'interactive',
+                        style: {
+                            background: 'rgba(0,0,0,0.2)',
+                            padding: '1.5rem',
+                            borderRadius: '0.75rem',
+                            backdropFilter: 'blur(10px)',
+                            textAlign: 'center'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.25rem' } }, '🎮 Interactive'),
+                        h('button', {
+                            onClick: () => setCount(c => c + 1),
+                            style: {
+                                padding: '1rem 2rem',
+                                fontSize: '1rem',
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '0.5rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            },
+                            onMouseOver: (e) => e.target.style.background = '#2563eb',
+                            onMouseOut: (e) => e.target.style.background = '#3b82f6'
+                        }, `Clicked ${count} times`)
+                    ]),
+                    
+                    // Scaling info
+                    h('div', {
+                        key: 'scaling',
+                        style: {
+                            background: 'rgba(0,0,0,0.2)',
+                            padding: '1.5rem',
+                            borderRadius: '0.75rem',
+                            backdropFilter: 'blur(10px)'
+                        }
+                    }, [
+                        h('h3', { style: { margin: '0 0 1rem 0', fontSize: '1.25rem' } }, '🎯 Scaling'),
+                        h('div', { style: { fontSize: '0.9rem' } }, [
+                            h('div', { key: 'rem' }, 'Uses rem units'),
+                            h('div', { key: 'font' }, 'Dynamic font-size'),
+                            h('div', { key: 'aspect' }, 'Maintains 16:9 ratio'),
+                            h('div', { key: 'center' }, 'Auto-centering')
+                        ])
+                    ])
+                ]),
+                
+                // Footer
+                h('div', {
+                    key: 'footer',
+                    style: {
+                        textAlign: 'center',
+                        marginTop: '2rem',
+                        fontSize: '0.9rem',
+                        opacity: 0.8
+                    }
+                }, 'Resize window to test • F11 for fullscreen • DevTools for device emulation')
+            ])
+        }
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'))
+        root.render(h(SafeFrameDemo))
+        
+        // Log demo info
+        console.log('📺 Safe Frame TV Demo with Insets');
+        console.log('Library: @osiris-smarttv/tv-safe-frame');
+        console.log('React Version:', React.version);
+        console.log('Initial Viewport:', window.innerWidth + 'x' + window.innerHeight);
+    </script>
+</body>
+</html>

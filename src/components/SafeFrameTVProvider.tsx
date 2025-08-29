@@ -93,6 +93,7 @@ const SafeFrameTVProvider: React.FC<SafeFrameTVProviderProps> = ({
   const contextValue = useMemo<SafeFrameTVContextType>(
     () => ({
       dimension,
+      insets: dimension.insets,
     }),
     [dimension]
   )

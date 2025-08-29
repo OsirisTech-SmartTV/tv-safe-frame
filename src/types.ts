@@ -1,6 +1,16 @@
 import { ScaleResult } from './utils/scale'
 
 /**
+ * Safe Frame insets - distances from safe frame to viewport edges
+ */
+export interface SafeFrameInsets {
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+/**
  * Safe Frame TV constants
  */
 export interface SafeFrameConstants {
@@ -14,6 +24,7 @@ export interface SafeFrameConstants {
  */
 export interface SafeFrameTVContextType {
   dimension: ScaleResult
+  insets: SafeFrameInsets
 }
 
 /**

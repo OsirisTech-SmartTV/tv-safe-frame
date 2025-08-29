@@ -11,12 +11,23 @@ const CONSTANTS = {
 }
 
 /**
+ * Safe Frame insets - distances from safe frame to viewport edges
+ */
+export interface SafeFrameInsets {
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+/**
  * Interface kết quả của scale
  */
 export interface ScaleResult {
   width: number
   height: number
   scaleRatio: number
+  insets: SafeFrameInsets
 }
 
 /**
@@ -160,6 +171,28 @@ class ScaleUtility {
   }
 
   /**
+   * Tính toán insets - khoảng cách từ safe frame đến các cạnh viewport
+   */
+  private calculateInsets(
+    safeFrameWidth: number,
+    safeFrameHeight: number
+  ): SafeFrameInsets {
+    const viewportWidth = this.getRealWidth()
+    const viewportHeight = this.getRealHeight()
+
+    // Calculate horizontal and vertical centering offsets
+    const horizontalOffset = Math.max(0, (viewportWidth - safeFrameWidth) / 2)
+    const verticalOffset = Math.max(0, (viewportHeight - safeFrameHeight) / 2)
+
+    return {
+      top: verticalOffset,
+      bottom: verticalOffset,
+      left: horizontalOffset,
+      right: horizontalOffset,
+    }
+  }
+
+  /**
    * Lấy thông tin về kích thước và tỷ lệ scale
    */
   public getScaleInfo(): ScaleResult {
@@ -167,16 +200,23 @@ class ScaleUtility {
       CONSTANTS.REFERENCE_WIDTH / CONSTANTS.REFERENCE_HEIGHT
     const currentRatio = this.getRealWidth() / this.getRealHeight()
 
+    const safeFrameWidth =
+      currentRatio < referenceRatio
+        ? this.getRealWidth()
+        : this.getRealHeight() * referenceRatio
+
+    const safeFrameHeight =
+      currentRatio < referenceRatio
+        ? this.getRealWidth() / referenceRatio
+        : this.getRealHeight()
+
+    const insets = this.calculateInsets(safeFrameWidth, safeFrameHeight)
+
     return {
-      width:
-        currentRatio < referenceRatio
-          ? this.getRealWidth()
-          : this.getRealHeight() * referenceRatio,
-      height:
-        currentRatio < referenceRatio
-          ? this.getRealWidth() / referenceRatio
-          : this.getRealHeight(),
+      width: safeFrameWidth,
+      height: safeFrameHeight,
       scaleRatio: this.calculateFontScale(),
+      insets,
     }
   }
 

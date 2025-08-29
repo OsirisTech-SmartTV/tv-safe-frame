@@ -4,17 +4,29 @@ import '@testing-library/jest-dom'
 import SafeFrameTVProvider from '../SafeFrameTVProvider'
 import { useSafeFrameTV } from '../../hooks/useSafeFrameTV'
 
-// Mock ScaleUtil with more detailed implementation
+// Mock ScaleUtil with more detailed implementation including insets
 const mockScaleUtil = {
   getScaleInfo: jest.fn(() => ({
     width: 1920,
     height: 1080,
     scaleRatio: 150,
+    insets: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    },
   })),
   updateScaleRatio: jest.fn(() => ({
     width: 1920,
     height: 1080,
     scaleRatio: 150,
+    insets: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    },
   })),
   addResizeListener: jest.fn((callback) => {
     // Store callback for manual triggering in tests
@@ -40,12 +52,16 @@ jest.mock('@osiris-smarttv/platform', () => ({
 
 // Test component that uses the hook
 const TestComponent: React.FC<{ debug?: boolean }> = ({ debug }) => {
-  const { dimension } = useSafeFrameTV()
+  const { dimension, insets } = useSafeFrameTV()
   return (
     <div data-testid="test-content">
       <span data-testid="width">{dimension.width}</span>
       <span data-testid="height">{dimension.height}</span>
       <span data-testid="scale-ratio">{dimension.scaleRatio}</span>
+      <span data-testid="insets-top">{insets.top}</span>
+      <span data-testid="insets-bottom">{insets.bottom}</span>
+      <span data-testid="insets-left">{insets.left}</span>
+      <span data-testid="insets-right">{insets.right}</span>
     </div>
   )
 }
@@ -103,7 +119,7 @@ describe('SafeFrameTVProvider Component', () => {
     expect(container).toHaveStyle({ width: '80rem' })
   })
 
-  it('should provide dimension context to children', () => {
+  it('should provide dimension context and insets to children', () => {
     render(
       <SafeFrameTVProvider>
         <TestComponent />
@@ -113,6 +129,36 @@ describe('SafeFrameTVProvider Component', () => {
     expect(screen.getByTestId('width')).toHaveTextContent('1920')
     expect(screen.getByTestId('height')).toHaveTextContent('1080')
     expect(screen.getByTestId('scale-ratio')).toHaveTextContent('150')
+    expect(screen.getByTestId('insets-top')).toHaveTextContent('0')
+    expect(screen.getByTestId('insets-bottom')).toHaveTextContent('0')
+    expect(screen.getByTestId('insets-left')).toHaveTextContent('0')
+    expect(screen.getByTestId('insets-right')).toHaveTextContent('0')
+  })
+
+  it('should calculate insets for ultra-wide viewport', () => {
+    // Mock ultra-wide viewport with horizontal insets
+    mockScaleUtil.getScaleInfo.mockReturnValue({
+      width: 1920,
+      height: 1080,
+      scaleRatio: 150,
+      insets: {
+        top: 0,
+        bottom: 0,
+        left: 320,
+        right: 320,
+      },
+    })
+
+    render(
+      <SafeFrameTVProvider>
+        <TestComponent />
+      </SafeFrameTVProvider>
+    )
+
+    expect(screen.getByTestId('insets-left')).toHaveTextContent('320')
+    expect(screen.getByTestId('insets-right')).toHaveTextContent('320')
+    expect(screen.getByTestId('insets-top')).toHaveTextContent('0')
+    expect(screen.getByTestId('insets-bottom')).toHaveTextContent('0')
   })
 
   it('should initialize dimensions on mount', () => {
@@ -141,6 +187,12 @@ describe('SafeFrameTVProvider Component', () => {
       width: 1280,
       height: 720,
       scaleRatio: 100,
+      insets: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      },
     })
 
     render(
@@ -176,6 +228,12 @@ describe('SafeFrameTVProvider Component', () => {
       width: 1280,
       height: 720,
       scaleRatio: 100,
+      insets: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      },
     })
 
     render(

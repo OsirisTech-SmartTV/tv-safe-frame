@@ -24,4 +24,6 @@ export type {
   SafeFrameTVContextType,
   SafeFrameTVReturn,
   SafeFrameConstants,
+  SafeFrameInsets,
 } from './types'
+export type { ScaleResult, SafeFrameInsets as ScaleInsets } from './utils/scale'
