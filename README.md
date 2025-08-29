@@ -8,7 +8,7 @@ A modern, production-ready TypeScript library that provides perfect 16:9 safe fr
 [![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-17%2B-61dafb)](https://reactjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](#)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](https://github.com/OsirisTech-SmartTV/tv-safe-frame/actions)
 
 ---
 
@@ -40,7 +40,7 @@ Building Smart TV applications is **challenging**. Different screen sizes, aspec
 
 ---
 
-## � **Installation & Setup**
+## 🚀 **Installation & Setup**
 
 ### Package Installation
 
@@ -109,9 +109,10 @@ function MyTVInterface() {
 }
 ```
 
-### Step 3: Enjoy Perfect Scaling! 
+### Step 3: Enjoy Perfect Scaling
 
 **✨ That's it!** Your app now automatically:
+
 - 🎯 Maintains perfect 16:9 aspect ratio on any screen
 - 📱 Scales responsively using CSS-native rem + font-size
 - 📐 Provides viewport positioning data via insets
@@ -119,7 +120,7 @@ function MyTVInterface() {
 
 ---
 
-## � **Understanding Safe Frame Insets**
+## 📐 **Understanding Safe Frame Insets**
 
 **Insets** are the key to building responsive Smart TV interfaces. They represent the **distance from your 80rem × 45rem safe frame to the viewport edges**, giving you precise positioning data for different screen shapes.
 
@@ -206,6 +207,7 @@ interface SafeFrameTVProviderProps {
 ```
 
 **Key Features:**
+
 - 🔄 Automatically handles window resize events
 - 📐 Calculates and provides real-time insets
 - ⚡ Optimized for 60fps performance
@@ -616,7 +618,8 @@ npm run demo
 
 ### **Interactive Demo**
 
-Open `index.html` in your browser to experience:
+Open `demo.html` in your browser to experience:
+
 - ✨ Real-time scaling visualization
 - 📊 Interactive insets display  
 - 🎯 Different aspect ratio simulations
@@ -694,13 +697,14 @@ MIT License - see [LICENSE](./LICENSE) for details.
 ### **Professional Support**
 
 For enterprise support, consulting, or custom implementations, contact us at:
-**thanhcongns94@gmail.com**
+[thanhcongns94@gmail.com](mailto:thanhcongns94@gmail.com)
 
 ---
 
 ## 🌟 **Acknowledgments**
 
 Special thanks to:
+
 - The React team for the amazing framework
 - Smart TV manufacturers for their platform documentation  
 - The open-source community for feedback and contributions
@@ -708,8 +712,6 @@ Special thanks to:
 
 ---
 
-**Made with ❤️ for the Smart TV developer community**
+## Made with ❤️ for the Smart TV developer community
 
 *Building better TV experiences, one pixel at a time* 📺✨
- 
- 
