@@ -1,6 +1,6 @@
 {
   "name": "@osiris-smarttv/tv-safe-frame",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Modern TypeScript library for Smart TV Safe Frame with React support",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
