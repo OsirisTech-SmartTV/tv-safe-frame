@@ -715,3 +715,7 @@ Special thanks to:
 ## Made with ❤️ for the Smart TV developer community
 
 *Building better TV experiences, one pixel at a time* 📺✨
+
+<a href="https://www.buymeacoffee.com/tconns94" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200"/>
+</a>
